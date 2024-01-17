@@ -9,7 +9,7 @@ from app.forms import BookingForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class StoreView(View):
+class StoreView(View): # 店舗一覧
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             start_date = date.today()
@@ -26,7 +26,7 @@ class StoreView(View):
         })
 
 
-class StaffView(View):
+class StaffView(View): # スタッフ一覧
     def get(self, request, *args, **kwargs):
         store_data = get_object_or_404(Store, id=self.kwargs['pk'])
         staff_data = Staff.objects.filter(store=store_data).select_related('user')
@@ -37,7 +37,7 @@ class StaffView(View):
         })
 
 
-class CalendarView(View):
+class CalendarView(View): # カレンダー
     def get(self, request, *args, **kwargs):
         staff_data = Staff.objects.filter(id=self.kwargs['pk']).select_related('user').select_related('store')[0]
         today = date.today()
@@ -83,7 +83,7 @@ class CalendarView(View):
         })
 
 
-class BookingView(View):
+class BookingView(View): # 予約フォーム
     def get(self, request, *args, **kwargs):
         staff_data = Staff.objects.filter(id=self.kwargs['pk']).select_related('user').select_related('store')[0]
         year = self.kwargs.get('year')
@@ -101,7 +101,7 @@ class BookingView(View):
             'form': form,
         })
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs): # 予約登録
         staff_data = get_object_or_404(Staff, id=self.kwargs['pk'])
         year = self.kwargs.get('year')
         month = self.kwargs.get('month')
@@ -139,7 +139,7 @@ class ThanksView(TemplateView):
     template_name = 'app/thanks.html'
 
 
-class MyPageView(LoginRequiredMixin, View):
+class MyPageView(LoginRequiredMixin, View): # マイページ
     def get(self, request, *args, **kwargs):
         staff_data = Staff.objects.filter(id=request.user.id).select_related('user').select_related('store')[0]
         year = self.kwargs.get('year')
